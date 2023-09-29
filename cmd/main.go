@@ -16,6 +16,7 @@ import (
 
 	"github.com/HardDie/tg_bot_actions/internal/config"
 	"github.com/HardDie/tg_bot_actions/internal/logger"
+	"github.com/HardDie/tg_bot_actions/internal/models"
 )
 
 const (
@@ -27,11 +28,6 @@ type Cache struct {
 	CockSize int `json:"cockSize"`
 	GayMeter int `json:"gayMeter"`
 	Criminal int `json:"criminal"`
-}
-
-type Criminal struct {
-	Number      string `json:"number"`
-	Description string `json:"description"`
 }
 
 func random(value int) int {
@@ -94,14 +90,14 @@ func getNoun() string {
 	return nounsList[random(len(nouns))]
 }
 
-func newCriminals() []Criminal {
+func newCriminals() []models.Criminal {
 	file, err := os.Open("criminals.json")
 	if err != nil {
 		logger.Error.Fatal("error open criminals.json file", err.Error())
 	}
 	defer file.Close()
 
-	var criminals []Criminal
+	var criminals []models.Criminal
 	err = json.NewDecoder(file).Decode(&criminals)
 	if err != nil {
 		logger.Error.Fatal("error parse criminals.json file", err.Error())
@@ -192,8 +188,14 @@ func main() {
 		articleCriminal := tgbotapi.NewInlineQueryResultArticleHTML(
 			uuid.New().String(),
 			"Твоя статья УК РФ",
-			fmt.Sprintf("%s <u>Твоя статья УК РФ</u>:\n<b>%s</b> - %s", criminalBook, criminals[data.Criminal].Number, criminals[data.Criminal].Description),
+			fmt.Sprintf(`%s <u>Твоя статья УК РФ</u>:
+<a href="%s"><b>%s</b></a> - %s`, criminalBook, criminals[data.Criminal].Link, criminals[data.Criminal].Number, criminals[data.Criminal].Description),
 		)
+		val, ok := articleCriminal.InputMessageContent.(tgbotapi.InputTextMessageContent)
+		if ok {
+			val.DisableWebPagePreview = true
+			articleCriminal.InputMessageContent = val
+		}
 		//articleCriminal.Description = "Твоя статья УК РФ"
 
 		articleAllIn := tgbotapi.NewInlineQueryResultArticleHTML(
@@ -203,8 +205,14 @@ func main() {
 				"\n\n"+
 				fmt.Sprintf("%s ‍Я на %d%% гей!", gayFlag, data.GayMeter)+
 				"\n\n"+
-				fmt.Sprintf("%s <u>Твоя статья УК РФ</u>:\n<b>%s</b> - %s", criminalBook, criminals[data.Criminal].Number, criminals[data.Criminal].Description),
+				fmt.Sprintf(`%s <u>Твоя статья УК РФ</u>:
+<a href="%s"><b>%s</b></a> - %s`, criminalBook, criminals[data.Criminal].Link, criminals[data.Criminal].Number, criminals[data.Criminal].Description),
 		)
+		val, ok = articleAllIn.InputMessageContent.(tgbotapi.InputTextMessageContent)
+		if ok {
+			val.DisableWebPagePreview = true
+			articleAllIn.InputMessageContent = val
+		}
 		//articleAllIn.Description = "Все и сразу!"
 
 		inlineConf := tgbotapi.InlineConfig{

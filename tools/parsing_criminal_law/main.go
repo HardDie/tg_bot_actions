@@ -6,17 +6,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
 
 	"golang.org/x/net/html"
-)
 
-type Criminal struct {
-	Number      string `json:"number"`
-	Description string `json:"description"`
-}
+	"github.com/HardDie/tg_bot_actions/internal/models"
+)
 
 func main() {
 	urlFlag := flag.String("url", "", "Where to find a list of criminal law statutes")
@@ -36,7 +34,16 @@ func main() {
 	links := extractLinks(h)
 	log.Println("Total count of links <a> on page:", len(links))
 
-	var criminals []Criminal
+	fullBaseURL, err := url.Parse(*urlFlag)
+	if err != nil {
+		log.Fatal("invalid url:", err)
+	}
+	baseURL := url.URL{
+		Scheme: fullBaseURL.Scheme,
+		Host:   fullBaseURL.Host,
+	}
+
+	var criminals []models.Criminal
 	for _, l := range links {
 		value := extractTextFromLink(l)
 		if !strings.HasPrefix(value, "Статья") {
@@ -45,6 +52,12 @@ func main() {
 		criminal := textToCriminal(value)
 		if criminal == nil {
 			continue
+		}
+
+		// Set valid link for criminal law
+		criminal.Link = extractAttrFromLink(l, "href")
+		if criminal.Link != "" {
+			criminal.Link = baseURL.String() + criminal.Link
 		}
 
 		// All records below 105 are not felonies, skip them
@@ -109,12 +122,20 @@ func extractTextFromLink(n *html.Node) string {
 	}
 	return strings.Join(strings.Fields(ret), " ")
 }
-func textToCriminal(text string) *Criminal {
+func extractAttrFromLink(n *html.Node, key string) string {
+	for _, attr := range n.Attr {
+		if strings.ToLower(attr.Key) == key {
+			return attr.Val
+		}
+	}
+	return ""
+}
+func textToCriminal(text string) *models.Criminal {
 	parts := strings.Split(text, " ")
 	if len(parts) < 3 {
 		return nil
 	}
-	return &Criminal{
+	return &models.Criminal{
 		Number:      strings.TrimSuffix(parts[1], "."),
 		Description: strings.Join(parts[2:], " "),
 	}
