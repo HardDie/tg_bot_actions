@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	Bot Bot
+	Bot   Bot
+	Cache Cache
 }
 
 func Get() Config {
@@ -20,7 +21,8 @@ func Get() Config {
 	}
 
 	cfg := Config{
-		Bot: botConfig(),
+		Bot:   botConfig(),
+		Cache: cacheConfig(),
 	}
 	return cfg
 }

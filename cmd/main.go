@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"math/rand"
 	"os"
-	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
@@ -119,7 +118,7 @@ func getUsername(m *tgbotapi.InlineQuery) *string {
 func main() {
 	cfg := config.Get()
 	cache := ttlcache.New[string, Cache](
-		ttlcache.WithTTL[string, Cache](time.Hour),
+		ttlcache.WithTTL[string, Cache](cfg.Cache.Period),
 	)
 	criminals := newCriminals()
 
