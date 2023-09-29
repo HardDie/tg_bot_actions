@@ -109,10 +109,14 @@ func getUsername(m *tgbotapi.InlineQuery) *string {
 	if m.From == nil {
 		return nil
 	}
-	if m.From.UserName == "" {
+	if m.From.UserName != "" {
+		return &m.From.UserName
+	}
+	if m.From.ID == 0 {
 		return nil
 	}
-	return &m.From.UserName
+	res := fmt.Sprintf("%d", m.From.ID)
+	return &res
 }
 
 func main() {
