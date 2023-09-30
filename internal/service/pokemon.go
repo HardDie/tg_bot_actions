@@ -36,11 +36,14 @@ var (
 		"rock":     "⛰",
 		"steel":    "⚙️",
 		"water":    "🌊",
+
+		"weed": "🤙",
 	}
 )
 
 type PokemonService struct {
-	pokemons []models.Pokemon
+	pokemons     []models.Pokemon
+	rarePokemons []models.Pokemon
 }
 
 func NewPokemonService() (*PokemonService, error) {
@@ -49,21 +52,34 @@ func NewPokemonService() (*PokemonService, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error init pokemon service: %w", err)
 	}
+	s.initRarePokemons()
 	return &s, nil
 }
 
-func (s PokemonService) GeneratePokemonIndex() int {
+func (s PokemonService) GeneratePokemonIndex() (int, bool) {
+	if utils.Random(100) == 1 {
+		return s.generateRandomRareIndex(), true
+	}
+	return s.generateRandomIndex(), false
+}
+func (s PokemonService) generateRandomRareIndex() int {
+	return utils.Random(len(s.rarePokemons))
+}
+func (s PokemonService) generateRandomIndex() int {
 	return utils.Random(len(s.pokemons))
 }
 
-func (s PokemonService) GenerateDescription(index int) string {
+func (s PokemonService) GenerateDescription(index int, isRare bool) string {
+	if isRare {
+		return s.generateDescriptionForRare(index)
+	}
 	if len(s.pokemons) == 0 {
 		logger.Error.Println("Pokemon records is empty")
 		return ""
 	}
 	if index < 0 || index >= len(s.pokemons) {
 		logger.Error.Printf("Invalid pokemon index: %d, have records: %d\n", index, len(s.pokemons))
-		index = s.GeneratePokemonIndex()
+		index = s.generateRandomIndex()
 	}
 
 	pokemon := s.pokemons[index]
@@ -75,6 +91,30 @@ func (s PokemonService) GenerateDescription(index int) string {
 		pokemon.ThumbnailImage,
 		pokemon.DetailPageURL,
 		pokemon.ID,
+		pokemon.Name,
+		s.typeOfPokemon(pokemon),
+		s.inchToFootInch(pokemon.Height), s.inchToCm(pokemon.Height),
+		pokemon.Weight, s.lbsToKg(pokemon.Weight),
+	)
+}
+
+func (s PokemonService) generateDescriptionForRare(index int) string {
+	if len(s.rarePokemons) == 0 {
+		logger.Error.Println("Rare pokemon records is empty")
+		return ""
+	}
+	if index < 0 || index >= len(s.rarePokemons) {
+		logger.Error.Printf("Invalid rare pokemon index: %d, have records: %d\n", index, len(s.rarePokemons))
+		index = s.generateRandomRareIndex()
+	}
+
+	pokemon := s.rarePokemons[index]
+	return fmt.Sprintf(hiddenImage+`Какой ты покемон:
+[RARE] <b>#????</b> %s
+Тип: %s
+Рост: %s (%s)
+Вес: %.01f lbs (%s)`,
+		pokemon.ThumbnailImage,
 		pokemon.Name,
 		s.typeOfPokemon(pokemon),
 		s.inchToFootInch(pokemon.Height), s.inchToCm(pokemon.Height),
@@ -100,6 +140,15 @@ func (s *PokemonService) readPokemonsFromFile(filename string) error {
 	}
 
 	return nil
+}
+func (s *PokemonService) initRarePokemons() {
+	s.rarePokemons = append(s.rarePokemons, models.Pokemon{
+		Name:           "Травозавр",
+		Type:           []string{"weed"},
+		ThumbnailImage: "https://i.imgur.com/xySj0Vs.png",
+		Weight:         155,
+		Height:         68,
+	})
 }
 func (s PokemonService) typeOfPokemon(p models.Pokemon) string {
 	var res []string

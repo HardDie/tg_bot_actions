@@ -71,16 +71,17 @@ func (s TelegramServer) Run(_ context.Context) error {
 
 		// Generate new
 		if data == nil {
+			PokemonID, PokemonIsRare := s.pokemon.GeneratePokemonIndex()
 			data = &models.Cache{
-				CockSize: s.penis.GenerateSize(),
-				GayMeter: s.gayMeter.GenerateValue(),
-				Criminal: s.criminal.GenerateCriminalIndex(),
-				Pokemon:  s.pokemon.GeneratePokemonIndex(),
-				Pressure: s.pressure.GeneratePressure(),
+				CockSize:      s.penis.GenerateSize(),
+				GayMeter:      s.gayMeter.GenerateValue(),
+				Criminal:      s.criminal.GenerateCriminalIndex(),
+				PokemonID:     PokemonID,
+				PokemonIsRare: PokemonIsRare,
+				Pressure:      s.pressure.GeneratePressure(),
 			}
-		}
-		// Update cache
-		if username != "" {
+
+			// Update cache
 			s.cache.Set(username, *data)
 		}
 
@@ -88,7 +89,7 @@ func (s TelegramServer) Run(_ context.Context) error {
 		articleGay := s.newArticle("На сколько я гей?", s.gayMeter.GenerateDescription(data.GayMeter), true)
 		articleCriminal := s.newArticle("Твоя статья УК РФ", s.criminal.GenerateDescription(data.Criminal), true)
 		articlePressure := s.newArticle("Давление у меня?", s.pressure.GenerateDescription(data.Pressure), true)
-		articlePokemon := s.newArticle("Это что за покемон?", s.pokemon.GenerateDescription(data.Pokemon), false)
+		articlePokemon := s.newArticle("Это что за покемон?", s.pokemon.GenerateDescription(data.PokemonID, data.PokemonIsRare), false)
 
 		articleAllIn := s.newArticle("Все и сразу!",
 			s.penis.GenerateDescription(data.CockSize)+"\n\n"+
