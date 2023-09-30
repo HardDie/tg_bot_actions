@@ -154,7 +154,7 @@ func writeToFile(filename string, data any) error {
 
 	err = json.NewEncoder(file).Encode(data)
 	if err != nil {
-		return fmt.Errorf("error encoding data into file %q: %w", file, err)
+		return fmt.Errorf("error encoding data into file %q: %w", filename, err)
 	}
 	return nil
 }
