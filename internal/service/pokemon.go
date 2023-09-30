@@ -33,7 +33,7 @@ var (
 		"ice":      "🧊",
 		"normal":   "normal",
 		"poison":   "🟣",
-		"physic":   "physic",
+		"psychic":  "psychic",
 		"rock":     "🪨",
 		"steel":    "steel",
 		"water":    "🌊",

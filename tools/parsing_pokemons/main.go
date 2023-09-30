@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/url"
 	"os"
@@ -16,17 +17,30 @@ import (
 
 func main() {
 	urlFlag := flag.String("url", "", "Where to find a list of pokemons")
+	fileFlag := flag.String("file", "", "File with pokemon description")
 	outFileFlag := flag.String("out_file", "pokemons.json", "Output json file for pokemons")
 	flag.Parse()
 
-	if *urlFlag == "" || *outFileFlag == "" {
+	if (*urlFlag == "" && *fileFlag == "") || *outFileFlag == "" {
 		flag.Usage()
 		return
 	}
 
-	list, err := downloadPageAndParse(*urlFlag)
+	var err error
+	var data []byte
+	if *fileFlag != "" {
+		data, err = openAndRead(*fileFlag)
+	} else {
+		data, err = downloadPage(*urlFlag)
+	}
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	var list []models.Pokemon
+	err = json.Unmarshal(data, &list)
+	if err != nil {
+		log.Fatal("error parse data:", err.Error())
 	}
 
 	fullBaseURL, err := url.Parse(*urlFlag)
@@ -64,7 +78,7 @@ func main() {
 	log.Printf("All pokemons were saved into %s file\n", *outFileFlag)
 }
 
-func downloadPageAndParse(url string) ([]models.Pokemon, error) {
+func downloadPage(url string) ([]byte, error) {
 	cli := resty.New().
 		SetRedirectPolicy(resty.FlexibleRedirectPolicy(20)).
 		SetHeaders(map[string]string{
@@ -87,12 +101,19 @@ func downloadPageAndParse(url string) ([]models.Pokemon, error) {
 		return nil, fmt.Errorf("error get page: %w", err)
 	}
 
-	var res []models.Pokemon
-	err = json.Unmarshal(resp.Body(), &res)
+	return resp.Body(), nil
+}
+func openAndRead(filename string) ([]byte, error) {
+	file, err := os.Open(filename)
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("error open file %s: %w", filename, err)
 	}
-	return res, nil
+	defer file.Close()
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return nil, fmt.Errorf("error read data from file %s: %w", filename, err)
+	}
+	return data, nil
 }
 func writeToFile(filename string, data any) error {
 	file, err := os.Create(filename)
