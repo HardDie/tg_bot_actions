@@ -6,11 +6,11 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
-	"github.com/jellydator/ttlcache/v3"
 
 	"github.com/HardDie/tg_bot_actions/internal/config"
 	"github.com/HardDie/tg_bot_actions/internal/logger"
 	"github.com/HardDie/tg_bot_actions/internal/models"
+	"github.com/HardDie/tg_bot_actions/internal/repository"
 	"github.com/HardDie/tg_bot_actions/internal/service"
 )
 
@@ -30,9 +30,6 @@ func getUsername(m *tgbotapi.InlineQuery) *string {
 
 func main() {
 	cfg := config.Get()
-	cache := ttlcache.New[string, models.Cache](
-		ttlcache.WithTTL[string, models.Cache](cfg.Cache.Period),
-	)
 
 	// Создаем бота
 	bot, err := tgbotapi.NewBotAPI(cfg.Bot.Token)
@@ -44,6 +41,7 @@ func main() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
+	cache := repository.NewCacheRepository(cfg.Cache)
 	penis := service.NewPenisService()
 	gayMeter := service.NewGayMeterService()
 	criminalService, err := service.NewCriminalService()
@@ -63,15 +61,10 @@ func main() {
 
 		// Check in cache and extract
 		username := getUsername(update.InlineQuery)
-		if username == nil {
-			logger.Warn.Println("Username not found in inline query")
-		}
 		if username != nil {
-			item := cache.Get(*username)
-			if item != nil {
-				val := item.Value()
-				data = &val
-			}
+			data = cache.Get(*username)
+		} else {
+			logger.Warn.Println("Username not found in inline query")
 		}
 
 		// Generate new
@@ -84,7 +77,7 @@ func main() {
 		}
 		// Update cache
 		if username != nil {
-			cache.Set(*username, *data, ttlcache.DefaultTTL)
+			cache.Set(*username, *data)
 		}
 
 		articleCock := tgbotapi.NewInlineQueryResultArticleHTML(
