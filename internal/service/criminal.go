@@ -50,7 +50,7 @@ func (s CriminalService) GenerateDescription(index int) string {
 }
 
 func (s *CriminalService) readLawFromFile(filename string) error {
-	file, err := os.Open("criminals.json")
+	file, err := os.Open(filename)
 	if err != nil {
 		return fmt.Errorf("error open %s: %w", filename, err)
 	}

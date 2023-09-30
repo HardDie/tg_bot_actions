@@ -3,6 +3,7 @@ module github.com/HardDie/tg_bot_actions
 go 1.21.1
 
 require (
+	github.com/go-resty/resty/v2 v2.8.0
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/google/uuid v1.3.1
 	github.com/jellydator/ttlcache/v3 v3.1.0

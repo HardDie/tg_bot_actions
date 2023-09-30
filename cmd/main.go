@@ -16,12 +16,16 @@ func main() {
 	cache := repository.NewCacheRepository(cfg.Cache)
 	penis := service.NewPenisService()
 	gayMeter := service.NewGayMeterService()
-	criminalService, err := service.NewCriminalService()
+	criminal, err := service.NewCriminalService()
+	if err != nil {
+		logger.Error.Fatal(err)
+	}
+	pokemon, err := service.NewPokemonService()
 	if err != nil {
 		logger.Error.Fatal(err)
 	}
 
-	bot, err := server.NewTelegramServer(cfg.Bot, cache, penis, gayMeter, criminalService)
+	bot, err := server.NewTelegramServer(cfg.Bot, cache, penis, gayMeter, criminal, pokemon)
 	if err != nil {
 		logger.Error.Fatal(err)
 	}
