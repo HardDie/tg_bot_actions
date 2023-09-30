@@ -13,29 +13,28 @@ import (
 )
 
 const (
-	pokemonSmile = "⚡️"
-	hiddenImage  = `<a href="%s">&#8205;</a>`
+	hiddenImage = `<a href="%s">&#8205;</a>`
 )
 
 var (
 	pokemonTypes = map[string]string{
 		"bug":      "🪲",
-		"dark":     "dark",
-		"dragon":   "🐉",
+		"dark":     "😈",
+		"dragon":   "🐲",
 		"electric": "⚡️",
 		"fairy":    "🧚‍♂️",
 		"fighting": "👊",
 		"fire":     "🔥",
-		"flying":   "✈️",
+		"flying":   "🕊️",
 		"ghost":    "👻",
-		"grass":    "🍀",
-		"ground":   "ground",
+		"grass":    "🌱",
+		"ground":   "🪱",
 		"ice":      "🧊",
-		"normal":   "normal",
-		"poison":   "🟣",
-		"psychic":  "psychic",
-		"rock":     "🪨",
-		"steel":    "steel",
+		"normal":   "🗿",
+		"poison":   "🧪",
+		"psychic":  "🧠",
+		"rock":     "⛰",
+		"steel":    "⚙️",
 		"water":    "🌊",
 	}
 )
