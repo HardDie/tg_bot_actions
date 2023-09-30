@@ -22,6 +22,7 @@ type TelegramServer struct {
 	gayMeter *service.GayMeterService
 	criminal *service.CriminalService
 	pokemon  *service.PokemonService
+	pressure *service.PressureService
 }
 
 func NewTelegramServer(
@@ -31,6 +32,7 @@ func NewTelegramServer(
 	gayMeter *service.GayMeterService,
 	criminal *service.CriminalService,
 	pokemon *service.PokemonService,
+	pressure *service.PressureService,
 ) (*TelegramServer, error) {
 	bot, err := tgbotapi.NewBotAPI(cfg.Token)
 	if err != nil {
@@ -44,6 +46,7 @@ func NewTelegramServer(
 		gayMeter: gayMeter,
 		criminal: criminal,
 		pokemon:  pokemon,
+		pressure: pressure,
 	}, nil
 }
 
@@ -73,6 +76,7 @@ func (s TelegramServer) Run(_ context.Context) error {
 				GayMeter: s.gayMeter.GenerateValue(),
 				Criminal: s.criminal.GenerateCriminalIndex(),
 				Pokemon:  s.pokemon.GeneratePokemonIndex(),
+				Pressure: s.pressure.GeneratePressure(),
 			}
 		}
 		// Update cache
@@ -83,16 +87,18 @@ func (s TelegramServer) Run(_ context.Context) error {
 		articleCock := s.newArticle("Петух размер", s.penis.GenerateDescription(data.CockSize), true)
 		articleGay := s.newArticle("На сколько я гей?", s.gayMeter.GenerateDescription(data.GayMeter), true)
 		articleCriminal := s.newArticle("Твоя статья УК РФ", s.criminal.GenerateDescription(data.Criminal), true)
+		articlePressure := s.newArticle("Давление у меня?", s.pressure.GenerateDescription(data.Pressure), true)
 		articlePokemon := s.newArticle("Это что за покемон?", s.pokemon.GenerateDescription(data.Pokemon), false)
 
 		articleAllIn := s.newArticle("Все и сразу!",
 			s.penis.GenerateDescription(data.CockSize)+"\n\n"+
 				s.gayMeter.GenerateDescription(data.GayMeter)+"\n\n"+
+				s.pressure.GenerateDescription(data.Pressure)+"\n\n"+
 				s.criminal.GenerateDescription(data.Criminal),
 			true,
 		)
 
-		s.send(update.InlineQuery.ID, articleCock, articleGay, articleCriminal, articlePokemon, articleAllIn)
+		s.send(update.InlineQuery.ID, articleCock, articleGay, articleCriminal, articlePressure, articlePokemon, articleAllIn)
 	}
 	return nil
 }
