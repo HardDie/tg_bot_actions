@@ -16,6 +16,7 @@ func NewCacheRepository(cfg config.Cache) *CacheRepository {
 	return &CacheRepository{
 		cache: ttlcache.New[string, models.Cache](
 			ttlcache.WithTTL[string, models.Cache](cfg.Period),
+			ttlcache.WithDisableTouchOnHit[string, models.Cache](),
 		),
 	}
 }
