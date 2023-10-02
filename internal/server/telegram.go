@@ -86,10 +86,19 @@ func (s TelegramServer) Run(_ context.Context) error {
 		}
 
 		articleCock := s.newArticle("Петух размер", s.penis.GenerateDescription(data.CockSize), true)
+		articleCock.ThumbURL = "https://i.imgur.com/b3JglXH.jpeg"
+
 		articleGay := s.newArticle("На сколько я гей?", s.gayMeter.GenerateDescription(data.GayMeter), true)
+		articleGay.ThumbURL = "https://i.imgur.com/AGLptQH.jpeg"
+
 		articleCriminal := s.newArticle("Твоя статья УК РФ", s.criminal.GenerateDescription(data.Criminal), true)
+		articleCriminal.ThumbURL = "https://i.imgur.com/uvLq5Qy.jpeg"
+
 		articlePressure := s.newArticle("Давление у меня?", s.pressure.GenerateDescription(data.Pressure), true)
+		articlePressure.ThumbURL = "https://i.imgur.com/E7fExxg.jpeg"
+
 		articlePokemon := s.newArticle("Это что за покемон?", s.pokemon.GenerateDescription(data.PokemonID, data.PokemonIsRare), false)
+		articlePokemon.ThumbURL = "https://i.imgur.com/EeqmBiU.jpg"
 
 		articleAllIn := s.newArticle("Все и сразу!",
 			s.penis.GenerateDescription(data.CockSize)+"\n\n"+
@@ -98,6 +107,7 @@ func (s TelegramServer) Run(_ context.Context) error {
 				s.criminal.GenerateDescription(data.Criminal),
 			true,
 		)
+		articleAllIn.ThumbURL = "https://i.imgur.com/9Kj3Y6t.jpeg"
 
 		s.send(update.InlineQuery.ID, articleCock, articleGay, articleCriminal, articlePressure, articlePokemon, articleAllIn)
 	}
