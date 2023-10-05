@@ -89,7 +89,7 @@ func (s PokemonService) GenerateDescription(index int, isRare bool) string {
 Рост: %s (%s)
 Вес: %.01f lbs (%s)
 Поколение: %s
-Регион: %s`,
+Регион: <a href="%s"><b>%s</b></a>`,
 		pokemon.ThumbnailImage,
 		pokemon.DetailPageURL,
 		pokemon.ID,
@@ -98,7 +98,7 @@ func (s PokemonService) GenerateDescription(index int, isRare bool) string {
 		s.inchToFootInch(pokemon.Height), s.inchToCm(pokemon.Height),
 		pokemon.Weight, s.lbsToKg(pokemon.Weight),
 		s.intToRoman(pokemon.Generation),
-		pokemon.Region,
+		pokemon.RegionLink, pokemon.Region,
 	)
 }
 

@@ -10,6 +10,7 @@ type Pokemon struct {
 	Height         float32  `json:"height"` // inch
 	Generation     int      `json:"generation"`
 	Region         string   `json:"region"`
+	RegionLink     string   `json:"regionLink"`
 
 	//Abilities        []string `json:"abilities"`
 	//Weakness         []string `json:"weakness"`
