@@ -8,6 +8,8 @@ type Pokemon struct {
 	ThumbnailImage string   `json:"ThumbnailImage"`
 	Weight         float32  `json:"weight"` // lbs
 	Height         float32  `json:"height"` // inch
+	Generation     int      `json:"generation"`
+	Region         string   `json:"region"`
 
 	//Abilities        []string `json:"abilities"`
 	//Weakness         []string `json:"weakness"`

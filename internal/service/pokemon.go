@@ -87,7 +87,9 @@ func (s PokemonService) GenerateDescription(index int, isRare bool) string {
 <a href="%s"><b>#%04d</b></a> %s
 Тип: %s
 Рост: %s (%s)
-Вес: %.01f lbs (%s)`,
+Вес: %.01f lbs (%s)
+Поколение: %s
+Регион: %s`,
 		pokemon.ThumbnailImage,
 		pokemon.DetailPageURL,
 		pokemon.ID,
@@ -95,6 +97,8 @@ func (s PokemonService) GenerateDescription(index int, isRare bool) string {
 		s.typeOfPokemon(pokemon),
 		s.inchToFootInch(pokemon.Height), s.inchToCm(pokemon.Height),
 		pokemon.Weight, s.lbsToKg(pokemon.Weight),
+		s.intToRoman(pokemon.Generation),
+		pokemon.Region,
 	)
 }
 
@@ -170,4 +174,18 @@ func (s PokemonService) inchToFootInch(val float32) string {
 }
 func (s PokemonService) inchToCm(val float32) string {
 	return fmt.Sprintf("%.01f см", math.Round(float64(val*2.54)))
+}
+func (s PokemonService) intToRoman(num int) string {
+	var roman string = ""
+	var numbers = []int{1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000}
+	var romans = []string{"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M"}
+	var index = len(romans) - 1
+	for num > 0 {
+		for numbers[index] <= num {
+			roman += romans[index]
+			num -= numbers[index]
+		}
+		index -= 1
+	}
+	return roman
 }

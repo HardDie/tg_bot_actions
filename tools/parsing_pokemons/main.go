@@ -63,6 +63,35 @@ func main() {
 	// Convert map to sorted slice
 	pokemonList := make([]models.Pokemon, 0, len(pokemons))
 	for _, p := range pokemons {
+		switch {
+		case p.ID <= 151:
+			p.Generation = 1
+			p.Region = "Канто"
+		case p.ID <= 251:
+			p.Generation = 2
+			p.Region = "Джото"
+		case p.ID <= 386:
+			p.Generation = 3
+			p.Region = "Хоенн"
+		case p.ID <= 493:
+			p.Generation = 4
+			p.Region = "Синно"
+		case p.ID <= 649:
+			p.Generation = 5
+			p.Region = "Юнова"
+		case p.ID <= 721:
+			p.Generation = 6
+			p.Region = "Калос"
+		case p.ID <= 809:
+			p.Generation = 7
+			p.Region = "Алола"
+		case p.ID <= 905:
+			p.Generation = 8
+			p.Region = "Галар"
+		case p.ID <= 1010:
+			p.Generation = 9
+			p.Region = "Палдея"
+		}
 		pokemonList = append(pokemonList, p)
 	}
 	sort.Slice(pokemonList, func(i, j int) bool {
