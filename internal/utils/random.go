@@ -8,6 +8,7 @@ import (
 	"github.com/HardDie/tg_bot_actions/internal/logger"
 )
 
+// Random generate random value from [0, value)
 func Random(value int) int {
 	bigValue, err := crand.Int(crand.Reader, big.NewInt(int64(value)))
 	if err == nil {

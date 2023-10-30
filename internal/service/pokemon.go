@@ -57,7 +57,8 @@ func NewPokemonService() (*PokemonService, error) {
 }
 
 func (s PokemonService) GeneratePokemonIndex() (int, bool) {
-	if utils.Random(100) == 1 {
+	// Rare pokemon with %5 chance
+	if utils.Random(100) < 5 {
 		return s.generateRandomRareIndex(), true
 	}
 	return s.generateRandomIndex(), false
@@ -146,13 +147,50 @@ func (s *PokemonService) readPokemonsFromFile(filename string) error {
 	return nil
 }
 func (s *PokemonService) initRarePokemons() {
-	s.rarePokemons = append(s.rarePokemons, models.Pokemon{
-		Name:           "Травозавр",
-		Type:           []string{"weed"},
-		ThumbnailImage: "https://i.imgur.com/xySj0Vs.png",
-		Weight:         155,
-		Height:         68,
-	})
+	s.rarePokemons = append(s.rarePokemons,
+		models.Pokemon{
+			Name:           "Травозавр",
+			Type:           []string{"grass", "poison", "weed"},
+			ThumbnailImage: "https://i.imgur.com/xySj0Vs.png",
+			Weight:         155,
+			Height:         68,
+		},
+		models.Pokemon{
+			Name:           "#420",
+			Type:           []string{"grass", "poison", "weed"},
+			ThumbnailImage: "https://i.imgur.com/acP3eWP.jpeg",
+			Weight:         220,
+			Height:         74,
+		},
+		models.Pokemon{
+			Name:           "Bubblehash",
+			Type:           []string{"normal", "weed"},
+			ThumbnailImage: "https://i.imgur.com/6X6SA2m.jpeg",
+			Weight:         143,
+			Height:         67,
+		},
+		models.Pokemon{
+			Name:           "Honey Pot",
+			Type:           []string{"fire", "weed"},
+			ThumbnailImage: "https://i.imgur.com/Fiszpe7.jpg",
+			Weight:         1468,
+			Height:         69,
+		},
+		models.Pokemon{
+			Name:           "Pizza",
+			Type:           []string{"fairy", "weed"},
+			ThumbnailImage: "https://i.imgur.com/zntAPFt.jpg",
+			Weight:         151,
+			Height:         68,
+		},
+		models.Pokemon{
+			Name:           "Pikushu",
+			Type:           []string{"electric", "weed"},
+			ThumbnailImage: "https://i.imgur.com/tyWpIjo.jpg",
+			Weight:         198,
+			Height:         74,
+		},
+	)
 }
 func (s PokemonService) typeOfPokemon(p models.Pokemon) string {
 	var res []string
