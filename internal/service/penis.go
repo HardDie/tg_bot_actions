@@ -6,6 +6,10 @@ import (
 	"github.com/HardDie/tg_bot_actions/internal/utils"
 )
 
+const (
+	penisEmoji = "📏"
+)
+
 type PenisService struct {
 	nouns []string
 }
@@ -21,7 +25,7 @@ func (s PenisService) GenerateSize() int {
 }
 
 func (s PenisService) GenerateDescription(size int) string {
-	return fmt.Sprintf("%s у меня %dсм %s", s.getNoun(), size, s.getSmile(size))
+	return fmt.Sprintf("%s %s у меня %dсм %s", penisEmoji, s.getNoun(), size, s.getSmile(size))
 }
 
 func (s PenisService) getSmile(size int) string {

@@ -103,7 +103,6 @@ func (s TelegramServer) Run(_ context.Context) error {
 		articleAllIn := s.newArticle("Все и сразу!",
 			s.penis.GenerateDescription(data.CockSize)+"\n\n"+
 				s.gayMeter.GenerateDescription(data.GayMeter)+"\n\n"+
-				s.pressure.GenerateDescription(data.Pressure)+"\n\n"+
 				s.criminal.GenerateDescription(data.Criminal),
 			true,
 		)
